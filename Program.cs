@@ -73,6 +73,26 @@ public class BankAccount
     }
 }
 
+public class Program
+{
+    static void Main(string[] args)
+    {
+
+        BankAccount account = new BankAccount();
+        List<IPayment> payments = new List<IPayment>
+        {
+            new CreditCardPayment(),
+            new PayPalPayment(),
+            new BankTransferPayment()
+        };
+
+        foreach (var payment in payments)
+        {
+            account.Deposit(100, payment);
+        }
+    }
+}
+
 
 
 
