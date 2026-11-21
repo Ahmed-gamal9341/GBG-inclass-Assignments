@@ -1,99 +1,81 @@
-
-using System;
-using System.Collections.Generic;
-
-public interface IPayment
+abstract class Animal
 {
-    bool ProcessPayment(decimal amount);
-    string GetPaymenetType();
+    public string name { get; set; }
+    public abstract void speak();
+    public void sleep()
+    {
+        Console.WriteLine("zzzz");
+    }
+    public abstract string Sound { get; }
+
+
 }
 
-public class CreditCardPayment : IPayment
+class Dog : Animal
 {
-    public bool ProcessPayment(decimal amount)
+    public Dog(string name)
     {
-        return amount > 0;
+        this.name = name;
     }
-
-    public string GetPaymenetType()
+    public override void speak()
     {
-        return "Credit Card";
+        Console.WriteLine(Sound);
     }
-}
-
-public class PayPalPayment : IPayment
-{
-    public bool ProcessPayment(decimal amount)
+    public override string Sound
     {
-        return amount > 0;
-    }
-
-    public string GetPaymenetType()
-    {
-        return "PayPal";
+        get { return "howhow"; }
     }
 }
 
-public class BankTransferPayment : IPayment
+class Cat : Animal
 {
-    public bool ProcessPayment(decimal amount)
+    public Cat(string name)
     {
-        return amount > 0;
+        this.name = name;
+    }
+    public override string Sound
+    {
+        get { return "mewo"; }
     }
 
-    public string GetPaymenetType()
+
+    public override void speak()
     {
-        return "Bank Transfer";
+        Console.WriteLine(Sound);
     }
 }
 
-
-public class BankAccount
+class Bird : Animal
 {
-    private decimal _balance;
-
-    public decimal Balance
+    public Bird(string name)
     {
-        get { return _balance; }
-        private set
-        {
-            if (value < 0)
-                throw new ArgumentException("Balance cannot be negative.");
-            _balance = value;
-        }
+        this.name = name;
+    }
+    public override string Sound
+    {
+        get { return "sew"; }
     }
 
-    public void Deposit(decimal amount, IPayment payementMethod)
+    public override void speak()
     {
-        if (payementMethod.ProcessPayment(amount))
-        {
-            Balance += amount;
-            Console.WriteLine($"Deposited{amount} using {payementMethod.GetPaymenetType()}");
-        }
+        Console.WriteLine(Sound);
     }
 }
-
-public class Program
+class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
+        Dog dog = new Dog("x");
+        Cat cat = new Cat("y");
+        Bird bird = new Bird("z");
 
-        BankAccount account = new BankAccount();
-        List<IPayment> payments = new List<IPayment>
-        {
-            new CreditCardPayment(),
-            new PayPalPayment(),
-            new BankTransferPayment()
-        };
+        dog.speak();
+        dog.sleep();
 
-        foreach (var payment in payments)
-        {
-            account.Deposit(100, payment);
-        }
+        cat.speak();
+        cat.sleep();
+
+        bird.speak();
+        bird.sleep();
     }
 }
-
-
-
-
-
