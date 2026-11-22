@@ -1,81 +1,82 @@
-abstract class Animal
+public interface INotificationChannel
 {
-    public string name { get; set; }
-    public abstract void speak();
-    public void sleep()
-    {
-        Console.WriteLine("zzzz");
-    }
-    public abstract string Sound { get; }
-
-
+    void Send(string message);
 }
 
-class Dog : Animal
+public interface IMessageLogger
 {
-    public Dog(string name)
+    void Log(string message);
+}
+
+
+public class EmailChannel : INotificationChannel
+{
+    public void Send(string message)
     {
-        this.name = name;
-    }
-    public override void speak()
-    {
-        Console.WriteLine(Sound);
-    }
-    public override string Sound
-    {
-        get { return "howhow"; }
+        Console.WriteLine($"Email: {message}");
     }
 }
 
-class Cat : Animal
+public class SmsChannel : INotificationChannel
 {
-    public Cat(string name)
+    public void Send(string message)
     {
-        this.name = name;
-    }
-    public override string Sound
-    {
-        get { return "mewo"; }
-    }
-
-
-    public override void speak()
-    {
-        Console.WriteLine(Sound);
+        Console.WriteLine($"SMS: {message}");
     }
 }
 
-class Bird : Animal
+public class FileLogger : IMessageLogger
 {
-    public Bird(string name)
+    public void Log(string message)
     {
-        this.name = name;
-    }
-    public override string Sound
-    {
-        get { return "sew"; }
-    }
-
-    public override void speak()
-    {
-        Console.WriteLine(Sound);
+        Console.WriteLine($"Log: {message}");
     }
 }
+
+
+public class NotificationService
+{
+    private readonly INotificationChannel _channel;
+    private readonly IMessageLogger _logger;
+
+    public NotificationService(
+        INotificationChannel channel,
+        IMessageLogger logger)
+    {
+        _channel = channel;
+        _logger = logger;
+    }
+
+    public void Send(string message)
+    {
+        _channel.Send(message);
+        _logger.Log(message);
+    }
+}
+
 class Program
 {
-    static void Main()
+    static void Main(string[] args)
     {
-        Dog dog = new Dog("x");
-        Cat cat = new Cat("y");
-        Bird bird = new Bird("z");
+        IMessageLogger logger = new FileLogger();
 
-        dog.speak();
-        dog.sleep();
+        List<INotificationChannel> channels = new List<INotificationChannel>
+        {
+            new EmailChannel(),
+            new SmsChannel()
+        };
 
-        cat.speak();
-        cat.sleep();
+        string message = "Hello from Session 7!";
 
-        bird.speak();
-        bird.sleep();
+        // No if else is needed because both classes implement Inotificationchannel polymorphism calls the correct method
+
+        foreach (INotificationChannel channel in channels)
+        {
+            NotificationService service = new NotificationService(channel, logger);
+
+            service.Send(message);
+
+            Console.WriteLine();
+        }
     }
 }
